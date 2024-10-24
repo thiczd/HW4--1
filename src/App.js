@@ -177,8 +177,8 @@ class App extends Component {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
     console.log(data);
+    // const maxItems = Math.min(data.length, 5);
 
-    const maxItems = Math.min(data.length, 5);
     const margin = { top: 100, right: 150, bottom: 20, left: 50 };
     const width = 1000 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
@@ -189,24 +189,36 @@ class App extends Component {
     const container = svg
       .select(".g_1")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
-    container.selectAll("text").remove();
     const xScale = d3.scaleLinear().domain([0, 4]).range([0, width]);
-    const textScale = d3.scaleLinear().domain([0, 4]).range([80, 12]);
+    const textScale = d3.scaleLinear().domain([0, 4]).range([50, 12]);
 
-    for (let i = 0; i < maxItems; i++) {
-      container
-        .append("text")
-        .attr("class", "x label")
-        .attr("text-anchor", "end")
-        .attr("x", 100 + xScale(i))
-        .attr("y", margin.top)
-        .text(data[i][0])
-        .style("font-size", "5px")
-        .transition()
-        .duration(3000)
-        .style("font-size", textScale(i) + "px");
-    }
+    container
+      .selectAll("text")
+      .data(data, (d) => d[0])
+      .join(
+        (enter) =>
+          enter
+            .append("text")
+            .attr("text-anchor", "start")
+            .attr("x", (d, i) => xScale(i))
+            .attr("y", margin.top)
+            .text((d) => d[0])
+            .style("font-size", "5px")
+            .transition()
+            .duration(3000)
+            .style("font-size", (d, i) => textScale(i) + "px"),
+        (update) =>
+          update
+            .transition()
+            .duration(3000)
+            .attr("x", (d, i) => xScale(i))
+
+            .style("font-size", (d, i) => textScale(i) + "px"),
+
+        (exit) => exit.remove()
+      );
   }
+
   render() {
     return (
       <div className="parent">
