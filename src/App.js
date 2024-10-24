@@ -191,8 +191,13 @@ class App extends Component {
         .attr("x", margin.right + 150 * i)
         .attr("y", margin.top)
         .text(data[i][0])
-        .style("font-size", 1 + 7 * (5 - i) + "px")
+        .style("font-size", "12px")
         .style("margin", "200px");
+      container
+        .selectAll("text")
+        .transition()
+        .duration(1000)
+        .style("font-size", "22px");
     }
   }
   render() {
