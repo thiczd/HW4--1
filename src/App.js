@@ -177,27 +177,34 @@ class App extends Component {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
     console.log(data);
-    const margin = { top: 100, right: 150 }; // Define margins
 
-    var container = d3.select(".svg_parent").select(".g_1");
-    container.selectAll("text").remove();
     const maxItems = Math.min(data.length, 5);
+    const margin = { top: 100, right: 150, bottom: 20, left: 50 };
+    const width = 1000 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+    const svg = d3
+      .select(".svg_parent")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom);
+    const container = svg
+      .select(".g_1")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    container.selectAll("text").remove();
+    const xScale = d3.scaleLinear().domain([0, 4]).range([0, width]);
+    const textScale = d3.scaleLinear().domain([0, 4]).range([80, 12]);
 
     for (let i = 0; i < maxItems; i++) {
       container
         .append("text")
         .attr("class", "x label")
         .attr("text-anchor", "end")
-        .attr("x", margin.right + 150 * i)
+        .attr("x", 100 + xScale(i))
         .attr("y", margin.top)
         .text(data[i][0])
-        .style("font-size", "12px")
-        .style("margin", "200px");
-      container
-        .selectAll("text")
+        .style("font-size", "5px")
         .transition()
-        .duration(1000)
-        .style("font-size", "22px");
+        .duration(3000)
+        .style("font-size", textScale(i) + "px");
     }
   }
   render() {
